@@ -1,0 +1,150 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "1126labs",
+  "homepage": "https://github.com/1126labs/components",
+  "items": [
+    {
+      "name": "data-grid",
+      "type": "registry:block",
+      "title": "Data Grid",
+      "description": "Virtualized data grid with resize, pin, swap, search, filters, toolbar, and localStorage persistence.",
+      "dependencies": ["@tanstack/react-virtual", "lucide-react"],
+      "registryDependencies": [
+        "button",
+        "input",
+        "dropdown-menu",
+        "popover",
+        "skeleton",
+        "checkbox",
+        "badge"
+      ],
+      "files": [
+        {
+          "path": "src/registry/default/data-grid/index.ts",
+          "type": "registry:component",
+          "target": "components/data-grid/index.ts"
+        },
+        {
+          "path": "src/registry/default/data-grid/types.ts",
+          "type": "registry:lib",
+          "target": "components/data-grid/types.ts"
+        },
+        {
+          "path": "src/registry/default/data-grid/format-date.ts",
+          "type": "registry:lib",
+          "target": "components/data-grid/format-date.ts"
+        },
+        {
+          "path": "src/registry/default/data-grid/serial-number-column.ts",
+          "type": "registry:lib",
+          "target": "components/data-grid/serial-number-column.ts"
+        },
+        {
+          "path": "src/registry/default/data-grid/compare-data-grid-sort-values.ts",
+          "type": "registry:lib",
+          "target": "components/data-grid/compare-data-grid-sort-values.ts"
+        },
+        {
+          "path": "src/registry/default/data-grid/get-data-grid-cell-value.ts",
+          "type": "registry:lib",
+          "target": "components/data-grid/get-data-grid-cell-value.ts"
+        },
+        {
+          "path": "src/registry/default/data-grid/apply-data-grid-view.ts",
+          "type": "registry:lib",
+          "target": "components/data-grid/apply-data-grid-view.ts"
+        },
+        {
+          "path": "src/registry/default/data-grid/export-data-grid.ts",
+          "type": "registry:lib",
+          "target": "components/data-grid/export-data-grid.ts"
+        },
+        {
+          "path": "src/registry/default/data-grid/render-data-grid-cell.tsx",
+          "type": "registry:component",
+          "target": "components/data-grid/render-data-grid-cell.tsx"
+        },
+        {
+          "path": "src/registry/default/data-grid/text-cell-editor.tsx",
+          "type": "registry:component",
+          "target": "components/data-grid/text-cell-editor.tsx"
+        },
+        {
+          "path": "src/registry/default/data-grid/data-grid.tsx",
+          "type": "registry:component",
+          "target": "components/data-grid/data-grid.tsx"
+        },
+        {
+          "path": "src/registry/default/data-grid/data-grid-view.tsx",
+          "type": "registry:component",
+          "target": "components/data-grid/data-grid-view.tsx"
+        },
+        {
+          "path": "src/registry/default/data-grid/data-grid-toolbar.tsx",
+          "type": "registry:component",
+          "target": "components/data-grid/data-grid-toolbar.tsx"
+        },
+        {
+          "path": "src/registry/default/data-grid/data-grid-virtualized-rows.tsx",
+          "type": "registry:component",
+          "target": "components/data-grid/data-grid-virtualized-rows.tsx"
+        },
+        {
+          "path": "src/registry/default/data-grid/data-grid-funnel-trigger.tsx",
+          "type": "registry:component",
+          "target": "components/data-grid/data-grid-funnel-trigger.tsx"
+        },
+        {
+          "path": "src/registry/default/data-grid/funnels/filter-funnel.tsx",
+          "type": "registry:component",
+          "target": "components/data-grid/funnels/filter-funnel.tsx"
+        },
+        {
+          "path": "src/registry/default/data-grid/funnels/filter-funnel-virtual-list.tsx",
+          "type": "registry:component",
+          "target": "components/data-grid/funnels/filter-funnel-virtual-list.tsx"
+        },
+        {
+          "path": "src/registry/default/data-grid/use-debounced-callback.ts",
+          "type": "registry:hook",
+          "target": "components/data-grid/use-debounced-callback.ts"
+        },
+        {
+          "path": "src/registry/default/data-grid/use-data-grid-persistence.ts",
+          "type": "registry:hook",
+          "target": "components/data-grid/use-data-grid-persistence.ts"
+        },
+        {
+          "path": "src/registry/default/data-grid/use-data-grid-columns.ts",
+          "type": "registry:hook",
+          "target": "components/data-grid/use-data-grid-columns.ts"
+        },
+        {
+          "path": "src/registry/default/data-grid/use-data-grid-sort.ts",
+          "type": "registry:hook",
+          "target": "components/data-grid/use-data-grid-sort.ts"
+        },
+        {
+          "path": "src/registry/default/data-grid/use-data-grid-column-filters.ts",
+          "type": "registry:hook",
+          "target": "components/data-grid/use-data-grid-column-filters.ts"
+        },
+        {
+          "path": "src/registry/default/data-grid/use-data-grid-initial-behavior.ts",
+          "type": "registry:hook",
+          "target": "components/data-grid/use-data-grid-initial-behavior.ts"
+        },
+        {
+          "path": "src/registry/default/data-grid/use-data-grid-funnels.ts",
+          "type": "registry:hook",
+          "target": "components/data-grid/use-data-grid-funnels.ts"
+        },
+        {
+          "path": "src/registry/default/data-grid/use-data-grid-viewport-height.ts",
+          "type": "registry:hook",
+          "target": "components/data-grid/use-data-grid-viewport-height.ts"
+        }
+      ]
+    }
+  ]
+}
