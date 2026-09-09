@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { getDataGridColumnDisplayValue } from "./get-data-grid-cell-value";
-import type { DataGridCellContext, DataGridColumn } from "./types";
+import type { DataGridCellContext, DataGridColumn } from "../../types";
 
 export function renderDataGridCell<TData>(
   column: DataGridColumn<TData>,

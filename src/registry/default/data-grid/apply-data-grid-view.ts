@@ -1,6 +1,6 @@
-import { compareDataGridSortValues } from "./compare-data-grid-sort-values";
-import { getDataGridColumnDisplayValue } from "./get-data-grid-cell-value";
-import { isSerialNumberColumn } from "./serial-number-column";
+import { compareDataGridSortValues } from "./modules/sort/compare-data-grid-sort-values";
+import { getDataGridColumnDisplayValue } from "./modules/cells/get-data-grid-cell-value";
+import { isSerialNumberColumn } from "./modules/cells/serial-number-column";
 import type { DataGridColumn, DataGridViewState } from "./types";
 
 /** Sort (and optional client search/column filters) apply only to rows already loaded in memory. */

@@ -9,7 +9,7 @@ type DataGridVirtualizedRowsProps<TData> = {
   getRowId: (row: TData) => string;
   scrollElement: HTMLDivElement | null;
   gridTemplateColumns: string;
-  displayTotalWidth: number;
+  contentWidth: number;
   estimatedRowHeight: number;
   compact: boolean;
   scrollEndRef?: Ref<HTMLDivElement>;
@@ -22,7 +22,7 @@ export function DataGridVirtualizedRows<TData>({
   getRowId,
   scrollElement,
   gridTemplateColumns,
-  displayTotalWidth,
+  contentWidth,
   estimatedRowHeight,
   compact,
   scrollEndRef,
@@ -43,7 +43,7 @@ export function DataGridVirtualizedRows<TData>({
       className="relative"
       style={{
         height: rowVirtualizer.getTotalSize() + (scrollEndRef ? 16 : 0),
-        width: displayTotalWidth,
+        width: contentWidth,
       }}
     >
       {virtualRows.map((virtualRow) => {
@@ -65,7 +65,7 @@ export function DataGridVirtualizedRows<TData>({
               gridTemplateColumns,
               height: `${estimatedRowHeight}px`,
               transform: `translateY(${virtualRow.start}px)`,
-              width: displayTotalWidth,
+              width: contentWidth,
             }}
           >
             {renderRowCells(row, virtualRow.index)}

@@ -4,26 +4,26 @@ import { type CSSProperties, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { applyDataGridView } from "./apply-data-grid-view";
 import { DataGrid } from "./data-grid";
-import { DataGridToolbar } from "./data-grid-toolbar";
-import { exportDataGridCsv } from "./export-data-grid";
-import { createSerialNumberColumn } from "./serial-number-column";
+import { DataGridToolbar } from "./modules/toolbar/data-grid-toolbar";
+import { exportDataGridCsv } from "./modules/export/export-data-grid";
+import { createSerialNumberColumn } from "./modules/cells/serial-number-column";
 import type {
   DataGridColumn,
   DataGridColumnFilters,
   DataGridSort,
 } from "./types";
-import { useDataGridColumns } from "./use-data-grid-columns";
-import { useDataGridFunnels } from "./use-data-grid-funnels";
+import { useDataGridColumns } from "./modules/fields/use-data-grid-columns";
+import { useDataGridFunnels } from "./modules/filters/use-data-grid-funnels";
 import {
   type DataGridInitialBehavior,
   useDataGridInitialBehavior,
-} from "./use-data-grid-initial-behavior";
-import { readDataGridPersistedState } from "./use-data-grid-persistence";
-import { useDataGridViewportHeight } from "./use-data-grid-viewport-height";
+} from "./modules/initial-behavior/use-data-grid-initial-behavior";
+import { readDataGridPersistedState } from "./modules/persistence/use-data-grid-persistence";
+import { useDataGridViewportHeight } from "./modules/viewport/use-data-grid-viewport-height";
 import {
   DATA_GRID_SEARCH_DEBOUNCE_MS,
   useDebouncedCallback,
-} from "./use-debounced-callback";
+} from "./modules/search/use-debounced-callback";
 
 export type DataGridViewProps<TData> = {
   tableId: string;

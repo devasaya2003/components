@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import type { DataGridColumnFilters, DataGridSort } from "./types";
-import { useDataGridColumnFilters } from "./use-data-grid-column-filters";
-import { useDataGridSort } from "./use-data-grid-sort";
+import type { DataGridColumnFilters, DataGridSort } from "../../types";
+import { useDataGridColumnFilters } from "../filters/use-data-grid-column-filters";
+import { useDataGridSort } from "../sort/use-data-grid-sort";
 
 export type DataGridInitialBehavior = {
   filters?: DataGridColumnFilters;

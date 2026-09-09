@@ -4,7 +4,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { DocsLayout } from "@/components/docs/docs-layout";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { DataGridAdvancedPage } from "@/pages/docs/data-grid-advanced";
-import { DataGridApiPage } from "@/pages/docs/data-grid-api";
+import { DataGridModulesPage } from "@/pages/docs/data-grid-modules";
 import { DataGridOverviewPage } from "@/pages/docs/data-grid-overview";
 import { DataGridPrimitivesPage } from "@/pages/docs/data-grid-primitives";
 import { HomePage } from "@/pages/home-page";
@@ -26,7 +26,7 @@ createRoot(document.getElementById("root")!).render(
               path="/docs/data-grid/advanced"
               element={<DataGridAdvancedPage />}
             />
-            <Route path="/docs/data-grid/api" element={<DataGridApiPage />} />
+            <Route path="/docs/data-grid/modules" element={<DataGridModulesPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Routes>

@@ -21,13 +21,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { isUnsortableColumn } from "./serial-number-column";
+import { isUnsortableColumn } from "../cells/serial-number-column";
 import {
   getColumnLabelString,
   type DataGridColumn,
   type DataGridColumnFilters,
   type DataGridSort,
-} from "./types";
+} from "../../types";
 
 type DataGridToolbarProps<TData> = {
   columns: DataGridColumn<TData>[];

@@ -1,4 +1,4 @@
-import type { DataGridColumn } from "./types";
+import type { DataGridColumn } from "../../types";
 
 export const SERIAL_NUMBER_COLUMN_ID = "__serialNumber";
 

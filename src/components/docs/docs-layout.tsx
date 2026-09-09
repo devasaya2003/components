@@ -6,7 +6,7 @@ const NAV = [
   { to: "/docs/data-grid", label: "Data Grid", end: true },
   { to: "/docs/data-grid/primitives", label: "Primitives" },
   { to: "/docs/data-grid/advanced", label: "Advanced" },
-  { to: "/docs/data-grid/api", label: "API" },
+  { to: "/docs/data-grid/modules", label: "Modules" },
 ];
 
 export function DocsLayout() {

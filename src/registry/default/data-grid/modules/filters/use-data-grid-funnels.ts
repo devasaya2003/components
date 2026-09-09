@@ -2,8 +2,8 @@
 
 import { useMemo } from "react";
 import { createFilterFunnel } from "./funnels/filter-funnel";
-import { isSerialNumberColumn } from "./serial-number-column";
-import type { DataGridColumn, DataGridColumnFilters } from "./types";
+import { isSerialNumberColumn } from "../cells/serial-number-column";
+import type { DataGridColumn, DataGridColumnFilters } from "../../types";
 
 export type UseDataGridFunnelsOptions<TData> = {
   columns: DataGridColumn<TData>[];

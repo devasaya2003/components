@@ -1,19 +1,23 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { FilterIcon, Loader2Icon, SearchIcon, XIcon } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Loader2Icon, SearchIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { formatDataGridDate } from "../format-date";
-import {
-  getColumnLabelString,
-  type DataGridColumn,
-  type DataGridColumnFilterOption,
-  type DataGridColumnFilters,
-  type DataGridFunnel,
-} from "../types";
-import { DATA_GRID_SEARCH_DEBOUNCE_MS } from "../use-debounced-callback";
+import { getColumnLabelString, type DataGridColumn, type DataGridColumnFilterOption } from "../../../types";
+import { DATA_GRID_SEARCH_DEBOUNCE_MS } from "../../search/use-debounced-callback";
 import { FilterFunnelVirtualList } from "./filter-funnel-virtual-list";
+import {
+  filterOptionsBySearch,
+  resolveFilterOptions,
+} from "../resolve-filter-options";
+
+export {
+  createCustomFunnel,
+  createCustomListFilterFunnel,
+  createFilterFunnel,
+  createSearchFilterFunnel,
+} from "./filter-funnel-factories";
 
 type FilterFunnelContentProps<TData> = {
   column: DataGridColumn<TData>;
@@ -78,62 +82,16 @@ export function FilterFunnelContent<TData>({
     };
   }, [column, debouncedSearch]);
 
-  const resolvedOptions = useMemo<DataGridColumnFilterOption[]>(() => {
-    if (column.getFilterOptions) {
-      return asyncOptions ?? [];
-    }
-
-    if (column.filterOptions) {
-      if (typeof column.filterOptions === "function") {
-        return column.filterOptions(rows);
-      }
-      return column.filterOptions;
-    }
-
-    const uniqueValuesMap = new Map<string, string>();
-    for (const row of rows) {
-      const value = column.getValue(row);
-      if (
-        value !== undefined &&
-        value !== null &&
-        String(value).trim() !== ""
-      ) {
-        const valueStr = String(value);
-        if (!uniqueValuesMap.has(valueStr)) {
-          uniqueValuesMap.set(valueStr, valueStr);
-        }
-      }
-    }
-
-    const sortedValues = Array.from(uniqueValuesMap.keys()).sort((a, b) =>
-      a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }),
-    );
-
-    return sortedValues.map((val) => {
-      const isDate =
-        column.valueType === "date" || column.cell?.type === "date";
-      return {
-        value: val,
-        label: isDate ? formatDataGridDate(val) : val,
-      };
-    });
-  }, [asyncOptions, column, rows]);
+  const resolvedOptions = useMemo<DataGridColumnFilterOption[]>(
+    () => resolveFilterOptions({ column, rows, asyncOptions }),
+    [asyncOptions, column, rows],
+  );
 
   const filteredOptions = useMemo(() => {
     if (column.getFilterOptions) {
       return resolvedOptions;
     }
-
-    if (!search.trim()) {
-      return resolvedOptions;
-    }
-    const queryTerm = search.trim().toLowerCase();
-    return resolvedOptions.filter(
-      (opt) =>
-        opt.label.toLowerCase().includes(queryTerm) ||
-        opt.value.toLowerCase().includes(queryTerm) ||
-        (opt.detail && opt.detail.toLowerCase().includes(queryTerm)),
-    );
+    return filterOptionsBySearch(resolvedOptions, search);
   }, [column.getFilterOptions, resolvedOptions, search]);
 
   const activeCount = selectedValues.length;
@@ -268,78 +226,4 @@ export function FilterFunnelContent<TData>({
       </div>
     </div>
   );
-}
-
-export function createFilterFunnel<TData>(options: {
-  rows: TData[];
-  selectedValues: string[];
-  allActiveFilters?: DataGridColumnFilters;
-  onFilterChange: (selectedValues: string[]) => void;
-}): DataGridFunnel<TData> {
-  const isFiltered = options.selectedValues.length > 0;
-
-  return {
-    id: "filter",
-    label: "Filter",
-    isActive: isFiltered,
-    icon: <FilterIcon className="size-3" />,
-    renderWorkflow: ({ column, close }) => (
-      <FilterFunnelContent
-        key={options.selectedValues.join("\0")}
-        column={column}
-        rows={options.rows}
-        selectedValues={options.selectedValues}
-        onFilterChange={options.onFilterChange}
-        close={close}
-      />
-    ),
-  };
-}
-
-export function createSearchFilterFunnel<TData>(options: {
-  rows: TData[];
-  selectedValues: string[];
-  onFilterChange: (selectedValues: string[]) => void;
-}): DataGridFunnel<TData> {
-  return {
-    ...createFilterFunnel(options),
-    id: "filter-search",
-    label: "Search filter",
-  };
-}
-
-export function createCustomFunnel<TData>(funnel: DataGridFunnel<TData>): DataGridFunnel<TData> {
-  return funnel;
-}
-
-export function createCustomListFilterFunnel<TData>(options: {
-  selectedValues: string[];
-  onFilterChange: (selectedValues: string[]) => void;
-  optionsList: DataGridColumnFilterOption[];
-}): DataGridFunnel<TData> {
-  return {
-    id: "filter-list",
-    label: "Filter",
-    isActive: options.selectedValues.length > 0,
-    icon: <FilterIcon className="size-3" />,
-    renderWorkflow: ({ column, close }) => (
-      <FilterFunnelContent
-        key={options.selectedValues.join("\0")}
-        column={{
-          ...column,
-          filterOptions: options.optionsList,
-          getFilterOptions: undefined,
-        }}
-        rows={[]}
-        selectedValues={options.selectedValues}
-        onFilterChange={options.onFilterChange}
-        close={close}
-        showSearch={false}
-      />
-    ),
-  };
-}
-
-export function renderCustomFunnelPanel(content: ReactNode) {
-  return content;
 }

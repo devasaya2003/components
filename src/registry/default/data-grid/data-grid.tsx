@@ -6,17 +6,17 @@ import {
   useRef,
   useState,
   type CSSProperties,
-  type PointerEvent as ReactPointerEvent,
   type ReactNode,
 } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { DataGridVirtualizedRows } from "./data-grid-virtualized-rows";
 import { DataGridFunnelTrigger } from "./data-grid-funnel-trigger";
-import { renderDataGridCell } from "./render-data-grid-cell";
+import { renderDataGridCell } from "./modules/cells/render-data-grid-cell";
+import { clampColumnWidth } from "./modules/resize/clamp-column-width";
+import { useColumnResize } from "./modules/resize/use-column-resize";
 import {
   DEFAULT_COLUMN_WIDTH,
-  MIN_COLUMN_WIDTH,
   type DataGridColumn,
 } from "./types";
 
@@ -32,13 +32,6 @@ const SKELETON_ROWS = [
   "skeleton-9",
   "skeleton-10",
 ];
-
-type ResizeDraft = {
-  columnId: string;
-  startX: number;
-  startWidth: number;
-  width: number;
-};
 
 export type DataGridProps<TData> = {
   tableId?: string;
@@ -60,10 +53,6 @@ export type DataGridProps<TData> = {
   onColumnWidthChange?: (columnId: string, width: number) => void;
   rowHoverActions?: (row: TData) => ReactNode;
 };
-
-function clampColumnWidth(width: number) {
-  return Math.max(MIN_COLUMN_WIDTH, Math.round(width));
-}
 
 export function DataGrid<TData>({
   tableId: _tableId,
@@ -93,13 +82,35 @@ export function DataGrid<TData>({
   const [uncontrolledWidths, setUncontrolledWidths] = useState<
     Record<string, number>
   >({});
-  const [resizeDraft, setResizeDraft] = useState<ResizeDraft | null>(null);
-  const resizeDraftRef = useRef<ResizeDraft | null>(null);
 
   const isControlled = controlledColumnWidths !== undefined;
   const storedWidths = isControlled
     ? controlledColumnWidths
     : uncontrolledWidths;
+
+  const getBaseWidth = useCallback(
+    (column: DataGridColumn<TData>) => {
+      const stored = storedWidths[column.id];
+      if (typeof stored === "number" && Number.isFinite(stored)) {
+        return clampColumnWidth(stored);
+      }
+      return clampColumnWidth(column.width ?? DEFAULT_COLUMN_WIDTH);
+    },
+    [storedWidths],
+  );
+
+  const {
+    resizeDraft,
+    isColumnResizing,
+    handleResizePointerDown,
+    handleResizePointerMove,
+    handleResizePointerUp,
+  } = useColumnResize<TData>({
+    getBaseWidth,
+    isControlled,
+    onColumnWidthChange,
+    setUncontrolledWidths,
+  });
 
   const estimatedRowHeight = compact ? 32 : 40;
   const headerCellClassName = compact
@@ -111,14 +122,6 @@ export function DataGrid<TData>({
         "relative z-0 flex min-h-10 min-w-0 border-r bg-background px-3 py-2 last:border-r-0",
         virtualized ? "items-center" : "items-start",
       );
-
-  function getBaseWidth(column: DataGridColumn<TData>) {
-    const stored = storedWidths[column.id];
-    if (typeof stored === "number" && Number.isFinite(stored)) {
-      return clampColumnWidth(stored);
-    }
-    return clampColumnWidth(column.width ?? DEFAULT_COLUMN_WIDTH);
-  }
 
   const displayWidths = columns.map((column) => {
     if (resizeDraft?.columnId === column.id) {
@@ -132,6 +135,7 @@ export function DataGrid<TData>({
     0,
   );
 
+  const contentWidth = totalColumnWidth;
   const displayTotalWidth = Math.max(containerWidth, totalColumnWidth);
 
   useEffect(() => {
@@ -153,8 +157,6 @@ export function DataGrid<TData>({
     observer.observe(element);
     return () => observer.disconnect();
   }, [scrollElement]);
-
-  const isColumnResizing = resizeDraft !== null;
 
   useEffect(() => {
     if (!isColumnResizing) {
@@ -188,78 +190,6 @@ export function DataGrid<TData>({
   const gridTemplateColumns = displayWidths
     .map((width) => `${width}px`)
     .join(" ");
-
-  function commitWidth(columnId: string, width: number) {
-    const nextWidth = clampColumnWidth(width);
-    if (onColumnWidthChange) {
-      onColumnWidthChange(columnId, nextWidth);
-      return;
-    }
-    if (!isControlled) {
-      setUncontrolledWidths((current) => ({
-        ...current,
-        [columnId]: nextWidth,
-      }));
-    }
-  }
-
-  function endResize(event: PointerEvent) {
-    const draft = resizeDraftRef.current;
-    if (!draft) {
-      return;
-    }
-
-    const target = event.target as Element | null;
-    if (target && "releasePointerCapture" in target) {
-      try {
-        (target as Element).releasePointerCapture(event.pointerId);
-      } catch {
-        // Pointer may already be released.
-      }
-    }
-
-    commitWidth(draft.columnId, draft.width);
-    resizeDraftRef.current = null;
-    setResizeDraft(null);
-  }
-
-  function handleResizePointerDown(
-    event: ReactPointerEvent<HTMLDivElement>,
-    column: DataGridColumn<TData>,
-  ) {
-    event.preventDefault();
-    event.stopPropagation();
-
-    const startWidth = getBaseWidth(column);
-    const draft: ResizeDraft = {
-      columnId: column.id,
-      startX: event.clientX,
-      startWidth,
-      width: startWidth,
-    };
-    resizeDraftRef.current = draft;
-    setResizeDraft(draft);
-
-    event.currentTarget.setPointerCapture(event.pointerId);
-  }
-
-  function handleResizePointerMove(event: ReactPointerEvent<HTMLDivElement>) {
-    const draft = resizeDraftRef.current;
-    if (!draft) {
-      return;
-    }
-
-    const nextWidth = clampColumnWidth(
-      draft.startWidth + (event.clientX - draft.startX),
-    );
-    const nextDraft = { ...draft, width: nextWidth };
-    resizeDraftRef.current = nextDraft;
-    setResizeDraft(nextDraft);
-  }
-
-  function handleResizePointerUp(event: ReactPointerEvent<HTMLDivElement>) {
-    endResize(event.nativeEvent);
-  }
 
   const renderRowOverlay = rowHoverActions
     ? (row: TData) => (
@@ -363,14 +293,14 @@ export function DataGrid<TData>({
       >
         <div
           className={cn(
-            "isolate flex flex-col",
+            "isolate flex flex-col bg-background",
             totalColumnWidth > containerWidth && "min-w-max",
           )}
           style={{ width: displayTotalWidth }}
         >
           <div
             className="sticky top-0 z-50 grid border-b bg-background shadow-[0_1px_0_var(--border)]"
-            style={{ gridTemplateColumns, width: displayTotalWidth }}
+            style={{ gridTemplateColumns, width: contentWidth }}
           >
             {columns.map((column) => {
               return (
@@ -435,7 +365,7 @@ export function DataGrid<TData>({
               getRowId={getRowId}
               scrollElement={scrollElement}
               gridTemplateColumns={gridTemplateColumns}
-              displayTotalWidth={displayTotalWidth}
+              contentWidth={contentWidth}
               estimatedRowHeight={estimatedRowHeight}
               compact={compact}
               scrollEndRef={scrollEndRef}
@@ -443,7 +373,7 @@ export function DataGrid<TData>({
               renderRowOverlay={renderRowOverlay}
             />
           ) : (
-            <div className="relative" style={{ width: displayTotalWidth }}>
+            <div className="relative" style={{ width: contentWidth }}>
               {rows.map((row, rowIndex) => (
                 <div
                   key={getRowId(row)}
@@ -453,7 +383,7 @@ export function DataGrid<TData>({
                   )}
                   style={{
                     gridTemplateColumns,
-                    width: displayTotalWidth,
+                    width: contentWidth,
                   }}
                 >
                   {renderRowCells(row, rowIndex)}

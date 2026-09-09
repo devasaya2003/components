@@ -2,7 +2,7 @@ export { DataGridView } from "./data-grid-view";
 export type { DataGridViewProps } from "./data-grid-view";
 export { DataGrid } from "./data-grid";
 export type { DataGridProps } from "./data-grid";
-export { DataGridToolbar } from "./data-grid-toolbar";
+export { DataGridToolbar } from "./modules/toolbar/data-grid-toolbar";
 export { applyDataGridView } from "./apply-data-grid-view";
 export {
   buildDataGridExportRows,
@@ -10,39 +10,40 @@ export {
   exportDataGridCsv,
   sanitizeFilename,
   toCsv,
-} from "./export-data-grid";
-export { useDataGridColumns } from "./use-data-grid-columns";
-export { useDataGridViewportHeight } from "./use-data-grid-viewport-height";
+} from "./modules/export/export-data-grid";
+export { useDataGridColumns } from "./modules/fields/use-data-grid-columns";
+export { useDataGridViewportHeight } from "./modules/viewport/use-data-grid-viewport-height";
 export {
   createSerialNumberColumn,
   getSerialNumberValue,
   isSerialNumberColumn,
   isUnsortableColumn,
   SERIAL_NUMBER_COLUMN_ID,
-} from "./serial-number-column";
+} from "./modules/cells/serial-number-column";
 export {
   createCustomFunnel,
   createCustomListFilterFunnel,
   createFilterFunnel,
   createSearchFilterFunnel,
-} from "./funnels/filter-funnel";
+} from "./modules/filters/funnels/filter-funnel";
 export {
   useDataGridColumnFilters,
   serializeColumnFilters,
-} from "./use-data-grid-column-filters";
+} from "./modules/filters/use-data-grid-column-filters";
 export {
   useDataGridSort,
   serializeDataGridSort,
-} from "./use-data-grid-sort";
+} from "./modules/sort/use-data-grid-sort";
 export {
   useDataGridInitialBehavior,
   DEFAULT_DATA_GRID_INITIAL_BEHAVIOR,
-} from "./use-data-grid-initial-behavior";
-export type { DataGridInitialBehavior } from "./use-data-grid-initial-behavior";
-export { useDataGridFunnels } from "./use-data-grid-funnels";
-export { TextCellEditor } from "./text-cell-editor";
-export { formatDataGridDate } from "./format-date";
-export { DATA_GRID_SEARCH_DEBOUNCE_MS } from "./use-debounced-callback";
+} from "./modules/initial-behavior/use-data-grid-initial-behavior";
+export type { DataGridInitialBehavior } from "./modules/initial-behavior/use-data-grid-initial-behavior";
+export { useDataGridFunnels } from "./modules/filters/use-data-grid-funnels";
+export { TextCellEditor } from "./modules/cells/text-cell-editor";
+export { formatDataGridDate } from "./modules/cells/format-date";
+export { DATA_GRID_SEARCH_DEBOUNCE_MS } from "./modules/search/use-debounced-callback";
+export { extractTextFromReactNode, getColumnLabelString } from "./column-label";
 export type {
   DataGridCellConfig,
   DataGridCellContext,

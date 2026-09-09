@@ -1,14 +1,9 @@
 "use client";
 
-import { ArchiveIcon, PencilIcon, SlidersHorizontalIcon } from "lucide-react";
+import { SlidersHorizontalIcon } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import {
   DataGridView,
   TextCellEditor,
@@ -26,7 +21,7 @@ import {
 } from "./dummy-orders";
 
 export function HoverActionsDataGridDemo() {
-  const [rows, setRows] = useState(DUMMY_ORDERS);
+  const [rows] = useState(DUMMY_ORDERS);
 
   return (
     <DataGridView
@@ -37,38 +32,11 @@ export function HoverActionsDataGridDemo() {
       persist={false}
       rowHoverActions={(row) => (
         <>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                type="button"
-                size="icon-xs"
-                variant="ghost"
-                aria-label={`Edit ${row.orderNumber}`}
-              >
-                <PencilIcon />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Edit</TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                type="button"
-                size="icon-xs"
-                variant="ghost"
-                className="text-destructive hover:text-destructive"
-                aria-label={`Archive ${row.orderNumber}`}
-                onClick={() => {
-                  setRows((current) =>
-                    current.filter((item) => item.id !== row.id),
-                  );
-                }}
-              >
-                <ArchiveIcon />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Archive</TooltipContent>
-          </Tooltip>
+          <div>
+            <span className="max-w-xs text-sm">
+              Here we are getting the order number: {row.orderNumber}
+            </span>
+          </div>
         </>
       )}
     />

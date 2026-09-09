@@ -1,17 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { MIN_COLUMN_WIDTH, type DataGridColumn, type DataGridColumnFilters, type DataGridSort } from "./types";
+import { useEffect, useMemo, useState } from "react";
+import { MIN_COLUMN_WIDTH, type DataGridColumn, type DataGridColumnFilters, type DataGridSort } from "../../types";
 import {
   EMPTY_DATA_GRID_LAYOUT,
   readDataGridPersistedState,
   writeDataGridPersistedState,
   type DataGridColumnLayoutState,
-} from "./use-data-grid-persistence";
+} from "../persistence/use-data-grid-persistence";
 import {
-  isSerialNumberColumn,
-  SERIAL_NUMBER_COLUMN_ID,
-} from "./serial-number-column";
+  deriveOrderedColumns,
+  resolveVisibleColumnIds,
+} from "./derive-ordered-columns";
 
 type UseDataGridColumnsInput<TData> = {
   tableId: string;
@@ -58,69 +58,37 @@ export function useDataGridColumns<TData>({
     });
   }, [layout, persist, tableId, viewState]);
 
-  const availableColumnIds = columns.map((column) => column.id);
+  const availableColumnIds = useMemo(
+    () => columns.map((column) => column.id),
+    [columns],
+  );
+  const availableColumnIdSet = useMemo(
+    () => new Set(availableColumnIds),
+    [availableColumnIds],
+  );
 
-  let visibleColumnIds: string[];
-
-  if (layout.visibleColumnIds.length === 0) {
-    visibleColumnIds = availableColumnIds;
-  } else {
-    const availableColumnIdSet = new Set(availableColumnIds);
-    visibleColumnIds = layout.visibleColumnIds.filter((columnId) =>
-      availableColumnIdSet.has(columnId),
-    );
-  }
-
-  const availableColumnIdSet = new Set(availableColumnIds);
-  const visibleColumnIdSetForSerial = new Set(visibleColumnIds);
-
-  if (
-    availableColumnIdSet.has(SERIAL_NUMBER_COLUMN_ID) &&
-    !visibleColumnIdSetForSerial.has(SERIAL_NUMBER_COLUMN_ID)
-  ) {
-    visibleColumnIds = [SERIAL_NUMBER_COLUMN_ID, ...visibleColumnIds];
-  }
+  const visibleColumnIds = useMemo(
+    () =>
+      resolveVisibleColumnIds({
+        columns,
+        storedVisibleColumnIds: layout.visibleColumnIds,
+      }),
+    [columns, layout.visibleColumnIds],
+  );
 
   const columnOrder =
     layout.columnOrder.length > 0 ? layout.columnOrder : availableColumnIds;
 
-  const columnById = new Map(columns.map((column) => [column.id, column]));
-  const nextColumnOrder =
-    layout.columnOrder.length > 0 ? layout.columnOrder : availableColumnIds;
-  const orderedFromState = nextColumnOrder
-    .map((columnId) => columnById.get(columnId))
-    .filter((column): column is DataGridColumn<TData> => Boolean(column));
-  const nextColumnOrderSet = new Set(nextColumnOrder);
-  const remainingColumns = columns.filter(
-    (column) => !nextColumnOrderSet.has(column.id),
+  const orderedColumns = useMemo(
+    () =>
+      deriveOrderedColumns({
+        columns,
+        visibleColumnIds,
+        columnOrder: layout.columnOrder,
+        pinnedColumnIds: layout.pinnedColumnIds,
+      }),
+    [columns, visibleColumnIds, layout.columnOrder, layout.pinnedColumnIds],
   );
-  const visibleColumnIdSet = new Set(visibleColumnIds);
-  const pinnedColumnIdSet = new Set(layout.pinnedColumnIds);
-  const visibleOrderedColumns = [
-    ...orderedFromState,
-    ...remainingColumns,
-  ].filter((column) => visibleColumnIdSet.has(column.id));
-  const pinnedColumns = visibleOrderedColumns.filter((column) =>
-    pinnedColumnIdSet.has(column.id),
-  );
-  const unpinnedColumns = visibleOrderedColumns.filter(
-    (column) => !pinnedColumnIdSet.has(column.id),
-  );
-  const serialColumn = visibleOrderedColumns.find((column) =>
-    isSerialNumberColumn(column.id),
-  );
-  const pinnedWithoutSerial = pinnedColumns.filter(
-    (column) => !isSerialNumberColumn(column.id),
-  );
-  const unpinnedWithoutSerial = unpinnedColumns.filter(
-    (column) => !isSerialNumberColumn(column.id),
-  );
-
-  const orderedColumns = [
-    ...(serialColumn ? [serialColumn] : []),
-    ...pinnedWithoutSerial,
-    ...unpinnedWithoutSerial,
-  ];
 
   function updateVisibleColumnIds(nextColumnIds: string[]) {
     const nextColumnIdSet = new Set(nextColumnIds);

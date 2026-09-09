@@ -2,7 +2,7 @@
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
-import type { DataGridColumnFilterOption } from "../types";
+import type { DataGridColumnFilterOption } from "../../../types";
 
 type FilterFunnelVirtualListProps = {
   options: DataGridColumnFilterOption[];

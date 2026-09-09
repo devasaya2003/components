@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import type { DataGridColumnFilters } from "./types";
+import type { DataGridColumnFilters } from "../../types";
 
 function omitColumnFilter(
   filters: DataGridColumnFilters,
@@ -70,23 +70,4 @@ export function useDataGridColumnFilters(
   };
 }
 
-export function serializeColumnFilters(
-  filters?: DataGridColumnFilters,
-): Record<string, string | undefined> {
-  if (!filters) {
-    return {};
-  }
-  const activeEntries = Object.entries(filters).filter(
-    ([_, values]) => values && values.length > 0,
-  );
-  if (activeEntries.length === 0) {
-    return {};
-  }
-  const cleanFilters: DataGridColumnFilters = {};
-  for (const [key, values] of activeEntries) {
-    cleanFilters[key] = values;
-  }
-  return {
-    filters: JSON.stringify(cleanFilters),
-  };
-}
+export { serializeColumnFilters } from "./serialize-column-filters";

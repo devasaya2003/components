@@ -1,4 +1,4 @@
-import type { DataGridColumnFilters, DataGridSort } from "./types";
+import type { DataGridColumnFilters, DataGridSort } from "../../types";
 
 export type DataGridColumnLayoutState = {
   visibleColumnIds: string[];

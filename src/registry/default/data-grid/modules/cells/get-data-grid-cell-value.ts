@@ -3,7 +3,7 @@ import {
   getSerialNumberValue,
   isSerialNumberColumn,
 } from "./serial-number-column";
-import type { DataGridColumn } from "./types";
+import type { DataGridColumn } from "../../types";
 
 export function getDataGridColumnDisplayValue<TData>(
   column: DataGridColumn<TData>,
