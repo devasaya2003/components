@@ -316,8 +316,8 @@ const columns = [
 
         <DemoBlock
           title="Custom cell action (inline edit)"
-          description="Set interactive: true and renderCell to embed inputs, dropdowns, or editors inside a cell."
-          code={`import { TextCellEditor } from "@/registry/default/data-grid";
+          description="Set interactive: true and renderCell to use EditableCell. It only tracks display/edit state — renderEditor can be a text input, a dropdown, a textarea, anything with its own state, as long as it calls commit or cancel."
+          code={`import { EditableCell, TextEditorInput } from "@/registry/default/data-grid";
 
 const columns = [
   {
@@ -326,9 +326,25 @@ const columns = [
     interactive: true,
     getValue: (row) => row.company,
     renderCell: (row) => (
-      <TextCellEditor
+      <EditableCell
         value={row.company}
-        onCommit={(value) => updateRow(row.id, value)}
+        onCommit={(value) => updateRow(row.id, { company: value })}
+        renderEditor={(editor) => <TextEditorInput {...editor} />}
+      />
+    ),
+  },
+  {
+    id: "status",
+    label: "Status",
+    interactive: true,
+    getValue: (row) => row.status,
+    renderCell: (row) => (
+      <EditableCell
+        value={row.status}
+        onCommit={(value) => updateRow(row.id, { status: value })}
+        renderEditor={({ value, commit, cancel }) => (
+          <StatusDropdown value={value} onSelect={commit} onClose={cancel} />
+        )}
       />
     ),
   },

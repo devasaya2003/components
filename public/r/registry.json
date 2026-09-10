@@ -210,9 +210,9 @@
           "target": "components/data-grid/modules/cells/serial-number-column.ts"
         },
         {
-          "path": "src/registry/default/data-grid/modules/cells/text-cell-editor.tsx",
+          "path": "src/registry/default/data-grid/modules/cells/editable-cell.tsx",
           "type": "registry:component",
-          "target": "components/data-grid/modules/cells/text-cell-editor.tsx"
+          "target": "components/data-grid/modules/cells/editable-cell.tsx"
         },
         {
           "path": "src/registry/default/data-grid/modules/persistence/use-data-grid-persistence.ts",

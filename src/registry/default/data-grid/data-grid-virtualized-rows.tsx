@@ -58,7 +58,7 @@ export function DataGridVirtualizedRows<TData>({
             key={getRowId(row)}
             data-index={virtualRow.index}
             className={cn(
-              "group isolate absolute top-0 left-0 grid border-b border-border text-left font-normal text-[13px] transition-colors hover:bg-muted/40",
+              "group isolate absolute top-0 left-0 grid overflow-hidden border-b border-border text-left font-normal text-[13px] transition-colors hover:bg-muted/40",
               compact ? "min-h-8" : "min-h-10",
             )}
             style={{

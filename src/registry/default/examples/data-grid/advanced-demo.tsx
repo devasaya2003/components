@@ -1,12 +1,19 @@
 "use client";
 
-import { SlidersHorizontalIcon } from "lucide-react";
+import { CheckIcon, SlidersHorizontalIcon } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
   DataGridView,
-  TextCellEditor,
+  EditableCell,
+  TextEditorInput,
   createCustomFunnel,
   type DataGridColumn,
 } from "@/registry/default/data-grid";
@@ -43,11 +50,26 @@ export function HoverActionsDataGridDemo() {
   );
 }
 
+const ORDER_STATUS_OPTIONS: DummyOrder["status"][] = [
+  "open",
+  "in_progress",
+  "shipped",
+  "done",
+];
+
 export function InlineEditDataGridDemo() {
   const [rows, setRows] = useState(DUMMY_ORDERS);
 
+  function updateRow(id: string, patch: Partial<DummyOrder>) {
+    setRows((current) =>
+      current.map((item) => (item.id === id ? { ...item, ...patch } : item)),
+    );
+  }
+
   const columns: DataGridColumn<DummyOrder>[] = [
-    ...basicOrderColumns.filter((column) => column.id !== "company"),
+    ...basicOrderColumns.filter(
+      (column) => column.id !== "company" && column.id !== "status",
+    ),
     {
       id: "company",
       label: "Company",
@@ -55,15 +77,56 @@ export function InlineEditDataGridDemo() {
       interactive: true,
       getValue: (row) => row.company,
       renderCell: (row) => (
-        <TextCellEditor
+        <EditableCell
           value={row.company}
-          onCommit={(value) => {
-            setRows((current) =>
-              current.map((item) =>
-                item.id === row.id ? { ...item, company: value } : item,
-              ),
-            );
-          }}
+          onCommit={(value) => updateRow(row.id, { company: value })}
+          renderEditor={(editor) => <TextEditorInput {...editor} />}
+        />
+      ),
+    },
+    {
+      id: "status",
+      label: "Status",
+      width: 160,
+      interactive: true,
+      cell: { type: "badge", badgeVariant: "secondary" },
+      getValue: (row) => row.status.replace("_", " "),
+      renderCell: (row) => (
+        <EditableCell
+          value={row.status}
+          onCommit={(value) => updateRow(row.id, { status: value })}
+          renderDisplay={(status) => (
+            <span className="capitalize">{status.replace("_", " ")}</span>
+          )}
+          renderEditor={({ value, commit, cancel }) => (
+            <DropdownMenu
+              defaultOpen
+              onOpenChange={(open) => {
+                if (!open) cancel();
+              }}
+            >
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="h-7 w-full truncate rounded-sm px-1 text-left text-[13px] capitalize hover:bg-muted"
+                >
+                  {value.replace("_", " ")}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                {ORDER_STATUS_OPTIONS.map((option) => (
+                  <DropdownMenuItem
+                    key={option}
+                    className="capitalize"
+                    onClick={() => commit(option)}
+                  >
+                    {value === option ? <CheckIcon /> : null}
+                    {option.replace("_", " ")}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         />
       ),
     },

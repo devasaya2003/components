@@ -40,7 +40,11 @@ export {
 } from "./modules/initial-behavior/use-data-grid-initial-behavior";
 export type { DataGridInitialBehavior } from "./modules/initial-behavior/use-data-grid-initial-behavior";
 export { useDataGridFunnels } from "./modules/filters/use-data-grid-funnels";
-export { TextCellEditor } from "./modules/cells/text-cell-editor";
+export {
+  EditableCell,
+  TextEditorInput,
+} from "./modules/cells/editable-cell";
+export type { EditableCellEditorProps } from "./modules/cells/editable-cell";
 export { formatDataGridDate } from "./modules/cells/format-date";
 export { DATA_GRID_SEARCH_DEBOUNCE_MS } from "./modules/search/use-debounced-callback";
 export { useDebouncedSearch } from "./modules/search/use-debounced-search";

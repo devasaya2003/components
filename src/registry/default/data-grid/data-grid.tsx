@@ -378,7 +378,7 @@ export function DataGrid<TData>({
                 <div
                   key={getRowId(row)}
                   className={cn(
-                    "group isolate grid border-b border-border text-left font-normal text-[13px] transition-colors hover:bg-muted/40",
+                    "group isolate grid overflow-hidden border-b border-border text-left font-normal text-[13px] transition-colors hover:bg-muted/40",
                     compact ? "min-h-8" : "min-h-10",
                   )}
                   style={{

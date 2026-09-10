@@ -54,16 +54,32 @@ export function DataGridAdvancedPage() {
       </DemoBlock>
       <DemoBlock
         title="Inline editing"
-        description="Click a company cell to edit. Enter commits, Escape cancels."
+        description="EditableCell toggles between a display trigger and any editor component you provide — it just tracks open/closed and calls onCommit. Click Company to edit text, click Status to pick from a dropdown."
         code={`{
   id: "company",
   label: "Company",
   interactive: true,
   getValue: (row) => row.company,
   renderCell: (row) => (
-    <TextCellEditor
+    <EditableCell
       value={row.company}
       onCommit={(value) => updateCompany(row.id, value)}
+      renderEditor={(editor) => <TextEditorInput {...editor} />}
+    />
+  ),
+},
+{
+  id: "status",
+  label: "Status",
+  interactive: true,
+  getValue: (row) => row.status,
+  renderCell: (row) => (
+    <EditableCell
+      value={row.status}
+      onCommit={(value) => updateStatus(row.id, value)}
+      renderEditor={({ value, commit, cancel }) => (
+        <StatusDropdown value={value} onSelect={commit} onClose={cancel} />
+      )}
     />
   ),
 }`}
