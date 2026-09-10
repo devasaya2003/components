@@ -11,6 +11,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
   DataGridView,
   EditableCell,
   TextEditorInput,
@@ -30,22 +35,32 @@ import {
 export function HoverActionsDataGridDemo() {
   const [rows] = useState(DUMMY_ORDERS);
 
+  const columns: DataGridColumn<DummyOrder>[] = basicOrderColumns.map(
+    (column) =>
+      column.id === "orderNumber"
+        ? {
+            ...column,
+            renderCell: (row) => (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="truncate">{row.orderNumber}</span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  Here we are getting the order number: {row.orderNumber}
+                </TooltipContent>
+              </Tooltip>
+            ),
+          }
+        : column,
+  );
+
   return (
     <DataGridView
       tableId="docs-hover-orders"
-      columns={basicOrderColumns}
+      columns={columns}
       rows={rows}
       getRowId={(row) => row.id}
       persist={false}
-      rowHoverActions={(row) => (
-        <>
-          <div>
-            <span className="max-w-xs text-sm">
-              Here we are getting the order number: {row.orderNumber}
-            </span>
-          </div>
-        </>
-      )}
     />
   );
 }

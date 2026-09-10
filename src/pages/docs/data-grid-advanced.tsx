@@ -18,37 +18,22 @@ export function DataGridAdvancedPage() {
       />
       <DemoBlock
         title="Hover actions"
-        description="Pass rowHoverActions. Wrap icon buttons in a tooltip."
-        code={`<DataGridView
-  tableId="orders"
-  columns={columns}
-  rows={rows}
-  getRowId={(row) => row.id}
-  rowHoverActions={(row) => (
-    <>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button size="icon-xs" variant="ghost" aria-label="Edit">
-            <PencilIcon />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>Edit</TooltipContent>
-      </Tooltip>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            size="icon-xs"
-            variant="ghost"
-            onClick={() => archiveOrder(row.id)}
-          >
-            <ArchiveIcon />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>Archive</TooltipContent>
-      </Tooltip>
-    </>
-  )}
-/>`}
+        description="Hover is scoped to a single column via that column's renderCell — wrap the cell content in a Tooltip instead of using a row-wide overlay."
+        code={`{
+  id: "orderNumber",
+  label: "Order",
+  getValue: (row) => row.orderNumber,
+  renderCell: (row) => (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span className="truncate">{row.orderNumber}</span>
+      </TooltipTrigger>
+      <TooltipContent>
+        Here we are getting the order number: {row.orderNumber}
+      </TooltipContent>
+    </Tooltip>
+  ),
+}`}
       >
         <HoverActionsDataGridDemo />
       </DemoBlock>

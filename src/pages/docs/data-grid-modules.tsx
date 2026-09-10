@@ -357,16 +357,22 @@ const columns = [
 
         <DemoBlock
           title="Custom cell hover action"
-          description="Pass rowHoverActions to render an action overlay that appears on row hover or focus."
-          code={`<DataGridView
-  tableId="orders"
-  columns={columns}
-  rows={rows}
-  getRowId={(row) => row.id}
-  rowHoverActions={(row) => (
-    <button onClick={() => editRow(row)}>Edit</button>
-  )}
-/>`}
+          description="Scope hover to a single column via that column's renderCell, e.g. wrapping the cell in a Tooltip. Hover the Order column."
+          code={`{
+  id: "orderNumber",
+  label: "Order",
+  getValue: (row) => row.orderNumber,
+  renderCell: (row) => (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span className="truncate">{row.orderNumber}</span>
+      </TooltipTrigger>
+      <TooltipContent>
+        Here we are getting the order number: {row.orderNumber}
+      </TooltipContent>
+    </Tooltip>
+  ),
+}`}
         >
           <div id="hover-actions">
             <HoverActionsDataGridDemo />
