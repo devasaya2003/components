@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { compareDataGridSortValues } from "./compare-data-grid-sort-values";
+import {
+  compareDataGridSortValues,
+  parseSortableDateValue,
+  toSortComparableString,
+} from "./compare-data-grid-sort-values";
 
 describe("compareDataGridSortValues", () => {
   it("sorts formatted calendar dates chronologically, not by day number", () => {
@@ -45,5 +49,25 @@ describe("compareDataGridSortValues", () => {
   it("sorts numeric values that are not strings", () => {
     assert.equal(compareDataGridSortValues(900, 1234) < 0, true);
     assert.equal(compareDataGridSortValues(null, "2026-09-07") > 0, true);
+  });
+
+  it("toSortComparableString converts dates, numbers, and booleans", () => {
+    assert.equal(toSortComparableString(null), "");
+    assert.equal(toSortComparableString(undefined), "");
+    assert.equal(toSortComparableString(42), "42");
+    assert.equal(toSortComparableString(true), "1");
+    assert.equal(toSortComparableString(false), "0");
+    assert.equal(
+      toSortComparableString(new Date("2026-01-15T00:00:00.000Z")),
+      "2026-01-15T00:00:00.000Z",
+    );
+  });
+
+  it("parseSortableDateValue parses ISO and month-name dates", () => {
+    assert.equal(parseSortableDateValue(""), null);
+    assert.equal(parseSortableDateValue("—"), null);
+    assert.equal(typeof parseSortableDateValue("2026-08-15"), "number");
+    assert.equal(typeof parseSortableDateValue("15 Aug 2026"), "number");
+    assert.equal(parseSortableDateValue("not a date"), null);
   });
 });

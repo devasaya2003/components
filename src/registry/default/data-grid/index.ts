@@ -25,7 +25,7 @@ export {
   createCustomListFilterFunnel,
   createFilterFunnel,
   createSearchFilterFunnel,
-} from "./modules/filters/funnels/filter-funnel";
+} from "./modules/filters/funnels/filter-funnel-factories";
 export {
   useDataGridColumnFilters,
   serializeColumnFilters,
@@ -43,6 +43,7 @@ export { useDataGridFunnels } from "./modules/filters/use-data-grid-funnels";
 export { TextCellEditor } from "./modules/cells/text-cell-editor";
 export { formatDataGridDate } from "./modules/cells/format-date";
 export { DATA_GRID_SEARCH_DEBOUNCE_MS } from "./modules/search/use-debounced-callback";
+export { useDebouncedSearch } from "./modules/search/use-debounced-search";
 export { extractTextFromReactNode, getColumnLabelString } from "./column-label";
 export type {
   DataGridCellConfig,

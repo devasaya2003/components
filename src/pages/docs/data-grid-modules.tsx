@@ -132,7 +132,7 @@ const rows = useMemo(() => sortRows(rows, sort), [sort]);
 
         <DemoBlock
           title="Export"
-          description="Built-in CSV export with formula injection neutralisation. Set exportFilename to enable the toolbar button."
+          description="Built-in CSV export with formula injection neutralisation. The toolbar button is always shown; set exportFilename to customize the downloaded file's name (defaults to tableId)."
           code={`<DataGridView
   tableId="orders"
   columns={columns}

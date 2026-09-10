@@ -4,20 +4,17 @@ import { useEffect, useMemo, useState } from "react";
 import { Loader2Icon, SearchIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { getColumnLabelString, type DataGridColumn, type DataGridColumnFilterOption } from "../../../types";
+import { getColumnLabelString } from "../../../column-label";
+import type {
+  DataGridColumn,
+  DataGridColumnFilterOption,
+} from "../../../types";
 import { DATA_GRID_SEARCH_DEBOUNCE_MS } from "../../search/use-debounced-callback";
-import { FilterFunnelVirtualList } from "./filter-funnel-virtual-list";
 import {
   filterOptionsBySearch,
   resolveFilterOptions,
 } from "../resolve-filter-options";
-
-export {
-  createCustomFunnel,
-  createCustomListFilterFunnel,
-  createFilterFunnel,
-  createSearchFilterFunnel,
-} from "./filter-funnel-factories";
+import { FilterFunnelVirtualList } from "./filter-funnel-virtual-list";
 
 type FilterFunnelContentProps<TData> = {
   column: DataGridColumn<TData>;

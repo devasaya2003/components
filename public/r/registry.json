@@ -65,6 +65,31 @@
           "target": "components/data-grid/modules/toolbar/data-grid-toolbar.tsx"
         },
         {
+          "path": "src/registry/default/data-grid/modules/toolbar/toolbar-search.tsx",
+          "type": "registry:component",
+          "target": "components/data-grid/modules/toolbar/toolbar-search.tsx"
+        },
+        {
+          "path": "src/registry/default/data-grid/modules/toolbar/toolbar-fields-menu.tsx",
+          "type": "registry:component",
+          "target": "components/data-grid/modules/toolbar/toolbar-fields-menu.tsx"
+        },
+        {
+          "path": "src/registry/default/data-grid/modules/toolbar/toolbar-pin-menu.tsx",
+          "type": "registry:component",
+          "target": "components/data-grid/modules/toolbar/toolbar-pin-menu.tsx"
+        },
+        {
+          "path": "src/registry/default/data-grid/modules/toolbar/toolbar-sort-menu.tsx",
+          "type": "registry:component",
+          "target": "components/data-grid/modules/toolbar/toolbar-sort-menu.tsx"
+        },
+        {
+          "path": "src/registry/default/data-grid/modules/toolbar/toolbar-export-button.tsx",
+          "type": "registry:component",
+          "target": "components/data-grid/modules/toolbar/toolbar-export-button.tsx"
+        },
+        {
           "path": "src/registry/default/data-grid/modules/fields/use-data-grid-columns.ts",
           "type": "registry:hook",
           "target": "components/data-grid/modules/fields/use-data-grid-columns.ts"
@@ -158,6 +183,11 @@
           "path": "src/registry/default/data-grid/modules/search/use-debounced-callback.ts",
           "type": "registry:hook",
           "target": "components/data-grid/modules/search/use-debounced-callback.ts"
+        },
+        {
+          "path": "src/registry/default/data-grid/modules/search/use-debounced-search.ts",
+          "type": "registry:hook",
+          "target": "components/data-grid/modules/search/use-debounced-search.ts"
         },
         {
           "path": "src/registry/default/data-grid/modules/cells/render-data-grid-cell.tsx",

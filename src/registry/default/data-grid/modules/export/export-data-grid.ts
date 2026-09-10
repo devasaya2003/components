@@ -1,4 +1,5 @@
-import { getColumnLabelString, type DataGridColumn } from "../../types";
+import { getColumnLabelString } from "../../column-label";
+import type { DataGridColumn } from "../../types";
 import { getDataGridColumnDisplayValue } from "../cells/get-data-grid-cell-value";
 import { toCsv } from "./csv-utils";
 import { downloadTextFile } from "./download-text-file";

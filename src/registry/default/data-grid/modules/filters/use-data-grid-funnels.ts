@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { createFilterFunnel } from "./funnels/filter-funnel";
+import { createFilterFunnel } from "./funnels/filter-funnel-factories";
 import { isSerialNumberColumn } from "../cells/serial-number-column";
 import type { DataGridColumn, DataGridColumnFilters } from "../../types";
 

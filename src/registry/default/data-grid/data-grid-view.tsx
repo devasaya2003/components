@@ -20,10 +20,8 @@ import {
 } from "./modules/initial-behavior/use-data-grid-initial-behavior";
 import { readDataGridPersistedState } from "./modules/persistence/use-data-grid-persistence";
 import { useDataGridViewportHeight } from "./modules/viewport/use-data-grid-viewport-height";
-import {
-  DATA_GRID_SEARCH_DEBOUNCE_MS,
-  useDebouncedCallback,
-} from "./modules/search/use-debounced-callback";
+import { DATA_GRID_SEARCH_DEBOUNCE_MS } from "./modules/search/use-debounced-callback";
+import { useDebouncedSearch } from "./modules/search/use-debounced-search";
 
 export type DataGridViewProps<TData> = {
   tableId: string;
@@ -113,9 +111,10 @@ export function DataGridView<TData>({
     filters: storedView?.filters ?? initialBehavior?.filters,
   });
   const searchHandler = onSearch ?? onServerSearchChange;
-  const notifyServerSearch = useDebouncedCallback((nextSearch: string) => {
-    searchHandler?.(nextSearch.trim());
-  }, searchDebounceMs);
+  const notifyServerSearch = useDebouncedSearch(
+    searchHandler,
+    searchDebounceMs,
+  );
   const { sentinelRef, layout, estimatedHeight } =
     useDataGridViewportHeight(fillViewport);
 

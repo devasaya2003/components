@@ -1,3 +1,5 @@
+"use client";
+
 import type { ReactNode } from "react";
 import { FilterIcon } from "lucide-react";
 import type {

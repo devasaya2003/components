@@ -3,6 +3,7 @@ import { render } from "@testing-library/react";
 import {
   createCustomFunnel,
   createFilterFunnel,
+  createSearchFilterFunnel,
 } from "./filter-funnel-factories";
 import type { DataGridColumn } from "../../../types";
 
@@ -35,13 +36,13 @@ describe("filter funnel factories", () => {
   });
 
   it("createSearchFilterFunnel uses a distinct id", () => {
-    const funnel = createFilterFunnel<Row>({
+    const funnel = createSearchFilterFunnel<Row>({
       rows: [],
       selectedValues: [],
       onFilterChange: () => {},
     });
-    const searchFunnel = { ...funnel, id: "filter-search" };
-    expect(searchFunnel.id).toBe("filter-search");
+    expect(funnel.id).toBe("filter-search");
+    expect(funnel.label).toBe("Search filter");
   });
 
   it("createCustomFunnel passes the funnel through unchanged", () => {
