@@ -39,6 +39,8 @@ export type DataGridCellConfig = {
     | "outline"
     | "ghost"
     | "link";
+  /** Wrap text instead of truncating to one line. Only useful with `virtualized: false`, or with dynamic row-height virtualization. */
+  wrap?: boolean;
 };
 
 export type DataGridColumn<TData> = {

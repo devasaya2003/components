@@ -59,6 +59,8 @@ export type DataGridViewProps<TData> = {
   rowHoverActions?: (row: TData) => ReactNode;
   virtualized?: boolean;
   compact?: boolean;
+  /** Hide the built-in search/fields/pin/sort/export toolbar. */
+  hideToolbar?: boolean;
 };
 
 export function DataGridView<TData>({
@@ -93,6 +95,7 @@ export function DataGridView<TData>({
   rowHoverActions,
   virtualized = true,
   compact = false,
+  hideToolbar = false,
 }: DataGridViewProps<TData>) {
   const storedView = persistViewState
     ? readDataGridPersistedState(tableId)?.view
@@ -252,25 +255,27 @@ export function DataGridView<TData>({
           className,
         )}
       >
-        <DataGridToolbar
-          columns={columnsWithSerial}
-          visibleColumnIds={visibleColumnIds}
-          pinnedColumnIds={pinnedColumnIds}
-          columnOrder={columnOrder}
-          search={search}
-          sort={activeSort}
-          columnFilters={activeFilters}
-          searchPlaceholder={searchPlaceholder}
-          onSearchChange={handleSearchChange}
-          onVisibleColumnIdsChange={updateVisibleColumnIds}
-          onPinnedColumnIdsChange={updatePinnedColumnIds}
-          onColumnMove={moveColumn}
-          onSortChange={handleSortChange}
-          onClearFilters={handleClearFilters}
-          onExportCsv={handleExportCsv}
-          toolbarActions={toolbarActions}
-          searchActions={searchActions}
-        />
+        {!hideToolbar ? (
+          <DataGridToolbar
+            columns={columnsWithSerial}
+            visibleColumnIds={visibleColumnIds}
+            pinnedColumnIds={pinnedColumnIds}
+            columnOrder={columnOrder}
+            search={search}
+            sort={activeSort}
+            columnFilters={activeFilters}
+            searchPlaceholder={searchPlaceholder}
+            onSearchChange={handleSearchChange}
+            onVisibleColumnIdsChange={updateVisibleColumnIds}
+            onPinnedColumnIdsChange={updatePinnedColumnIds}
+            onColumnMove={moveColumn}
+            onSortChange={handleSortChange}
+            onClearFilters={handleClearFilters}
+            onExportCsv={handleExportCsv}
+            toolbarActions={toolbarActions}
+            searchActions={searchActions}
+          />
+        ) : null}
 
         <DataGrid
           tableId={tableId}
@@ -286,7 +291,6 @@ export function DataGridView<TData>({
           emptyMessage={emptyMessage}
           onScrollContainerRef={onScrollContainerRef}
           scrollEndRef={scrollEndRef}
-          scrollVertically={fillViewport || virtualized}
           virtualized={virtualized}
           compact={compact}
           rowHoverActions={rowHoverActions}

@@ -316,7 +316,7 @@ const columns = [
 
         <DemoBlock
           title="Custom cell action (inline edit)"
-          description="Set interactive: true and renderCell to use EditableCell. It only tracks display/edit state — renderEditor can be a text input, a dropdown, a textarea, anything with its own state, as long as it calls commit or cancel."
+          description="Set interactive: true and renderCell to use EditableCell. It only tracks display/edit state — renderEditor can be a text input, a dropdown, a textarea, anything with its own state, as long as it calls commit or cancel. For a Radix menu/popover editor, defer that call to onOpenChange (see StatusDropdownEditor below) — calling commit() straight from an item's onClick force-unmounts the menu mid-interaction and can leave Radix's scroll lock stuck."
           code={`import { EditableCell, TextEditorInput } from "@/registry/default/data-grid";
 
 const columns = [
@@ -342,13 +342,27 @@ const columns = [
       <EditableCell
         value={row.status}
         onCommit={(value) => updateRow(row.id, { status: value })}
-        renderEditor={({ value, commit, cancel }) => (
-          <StatusDropdown value={value} onSelect={commit} onClose={cancel} />
-        )}
+        renderEditor={(editor) => <StatusDropdownEditor {...editor} />}
       />
     ),
   },
-];`}
+];
+
+function StatusDropdownEditor({ value, commit, cancel }) {
+  const pendingRef = useRef(null);
+  return (
+    <DropdownMenu
+      defaultOpen
+      onOpenChange={(open) => {
+        if (open) return;
+        const pending = pendingRef.current;
+        pending !== null ? commit(pending) : cancel();
+      }}
+    >
+      {/* trigger + items; each item sets pendingRef.current, Radix closes itself */}
+    </DropdownMenu>
+  );
+}`}
         >
           <div id="inline-edit">
             <InlineEditDataGridDemo />

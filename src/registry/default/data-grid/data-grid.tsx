@@ -276,16 +276,14 @@ export function DataGrid<TData>({
   return (
     <div
       className={cn(
-        virtualized
-          ? "flex min-h-0 flex-1 flex-col overflow-hidden"
-          : "flex flex-col",
+        "flex min-h-0 flex-1 flex-col overflow-hidden",
         className,
       )}
     >
       <div
         ref={setScrollContainerRef}
         className={cn(
-          virtualized ? "min-h-0 flex-1" : "w-full",
+          "min-h-0 flex-1",
           scrollVertically
             ? "overflow-auto"
             : "overflow-x-auto overflow-y-visible",

@@ -44,10 +44,7 @@ export function EditableCell<TValue>({
   return (
     <button
       type="button"
-      className={cn(
-        "h-7 w-full truncate rounded-sm px-1 text-left text-[13px] hover:bg-muted",
-        className,
-      )}
+      className={cn("w-full text-left", className)}
       onClick={() => setEditing(true)}
     >
       {renderDisplay ? renderDisplay(value) : (value as ReactNode)}
@@ -55,12 +52,13 @@ export function EditableCell<TValue>({
   );
 }
 
-/** Text-input editor for `EditableCell`'s `renderEditor` — the common case of editing a single line of text. */
+/** Text-input editor for `EditableCell`'s `renderEditor` — the common case of editing a single line of text. Unstyled beyond layout; pass `className` for appearance. */
 export function TextEditorInput({
   value,
   commit,
   cancel,
-}: EditableCellEditorProps<string>) {
+  className,
+}: EditableCellEditorProps<string> & { className?: string }) {
   const [draft, setDraft] = useState(value);
 
   return (
@@ -77,7 +75,7 @@ export function TextEditorInput({
           cancel();
         }
       }}
-      className="h-7 w-full min-w-0 rounded-sm bg-background px-1 text-[13px] outline-none ring-1 ring-ring"
+      className={cn("w-full min-w-0 outline-none", className)}
     />
   );
 }

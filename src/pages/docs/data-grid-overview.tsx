@@ -1,12 +1,18 @@
+import { CodeBlock, DemoBlock, PageHeader } from "@/components/docs/page-blocks";
 import {
-  CodeBlock,
-  DemoBlock,
-  PageHeader,
-  PropsTable,
-} from "@/components/docs/page-blocks";
+  DataGridView,
+  type DataGridColumn,
+} from "@/registry/default/data-grid";
 import { BasicDataGridDemo } from "@/registry/default/examples/data-grid/basic-demo";
 
-const DATA_GRID_VIEW_PROPS = [
+type PropRow = {
+  name: string;
+  type: string;
+  default?: string;
+  description: string;
+};
+
+const DATA_GRID_VIEW_PROPS: PropRow[] = [
   {
     name: "tableId",
     type: "string",
@@ -52,6 +58,13 @@ const DATA_GRID_VIEW_PROPS = [
     name: "searchPlaceholder",
     type: "string",
     description: "Placeholder for the toolbar search input.",
+  },
+  {
+    name: "hideToolbar",
+    type: "boolean",
+    default: "false",
+    description:
+      "Hide the built-in search/fields/pin/sort/export toolbar entirely.",
   },
   {
     name: "exportFilename",
@@ -185,6 +198,55 @@ const DATA_GRID_VIEW_PROPS = [
   },
 ];
 
+const PROPS_TABLE_COLUMNS: DataGridColumn<PropRow>[] = [
+  {
+    id: "name",
+    label: "Prop",
+    width: 200,
+    filterable: false,
+    getValue: (row) => row.name,
+    renderCell: (row) => (
+      <span className="font-mono text-xs">{row.name}</span>
+    ),
+  },
+  {
+    id: "type",
+    label: "Type",
+    width: 280,
+    filterable: false,
+    getValue: (row) => row.type,
+    renderCell: (row) => (
+      <span className="whitespace-pre-wrap break-words font-mono text-muted-foreground text-xs">
+        {row.type}
+      </span>
+    ),
+  },
+  {
+    id: "default",
+    label: "Default",
+    width: 110,
+    filterable: false,
+    getValue: (row) => row.default ?? "—",
+    renderCell: (row) => (
+      <span className="font-mono text-muted-foreground text-xs">
+        {row.default ?? "—"}
+      </span>
+    ),
+  },
+  {
+    id: "description",
+    label: "Description",
+    width: 420,
+    filterable: false,
+    getValue: (row) => row.description,
+    renderCell: (row) => (
+      <span className="whitespace-pre-wrap break-words text-muted-foreground text-xs">
+        {row.description}
+      </span>
+    ),
+  },
+];
+
 export function DataGridOverviewPage() {
   return (
     <div>
@@ -216,7 +278,15 @@ export function DataGridOverviewPage() {
           Advanced features for column-level options like cell, funnels, and
           filterOptions.
         </p>
-        <PropsTable rows={DATA_GRID_VIEW_PROPS} />
+        <DataGridView
+          tableId="docs-props-reference"
+          className="border-1 rounded-md"
+          columns={PROPS_TABLE_COLUMNS}
+          rows={DATA_GRID_VIEW_PROPS}
+          getRowId={(row) => row.name}
+          persist={false}
+          hideToolbar
+        />
       </div>
     </div>
   );

@@ -6,6 +6,7 @@ import {
   FilterSearchDataGridDemo,
   HoverActionsDataGridDemo,
   InlineEditDataGridDemo,
+  NotionStyleDataGridDemo,
   SearchActionDataGridDemo,
 } from "@/registry/default/examples/data-grid/advanced-demo";
 
@@ -62,14 +63,75 @@ export function DataGridAdvancedPage() {
     <EditableCell
       value={row.status}
       onCommit={(value) => updateStatus(row.id, value)}
+      renderEditor={(editor) => <StatusDropdownEditor {...editor} />}
+    />
+  ),
+}
+
+// For a Radix menu/popover editor, defer commit()/cancel() to onOpenChange —
+// calling commit() directly from an item's onClick force-unmounts the menu
+// mid-interaction and can leave Radix's scroll lock stuck.
+function StatusDropdownEditor({ value, commit, cancel }) {
+  const pendingRef = useRef(null);
+  return (
+    <DropdownMenu
+      defaultOpen
+      onOpenChange={(open) => {
+        if (open) return;
+        const pending = pendingRef.current;
+        pending !== null ? commit(pending) : cancel();
+      }}
+    >
+      {/* trigger + items; each item sets pendingRef.current, Radix closes itself */}
+    </DropdownMenu>
+  );
+}`}
+      >
+        <InlineEditDataGridDemo />
+      </DemoBlock>
+      <DemoBlock
+        title="Notion-style rows"
+        description="hideToolbar removes the built-in toolbar, cell.wrap wraps text instead of truncating, and EditableCell renders with no default background/padding/hover — className fully controls the look. Rows still virtualize with dynamic heights (TanStack Virtual's measureElement), so a multi-line note grows the row and the ones after it reflow automatically."
+        code={`<DataGridView
+  tableId="orders"
+  columns={columns}
+  rows={rows}
+  getRowId={(row) => row.id}
+  hideToolbar
+/>
+
+{
+  id: "notes",
+  label: "Notes",
+  interactive: true,
+  filterable: false,
+  cell: { wrap: true },
+  getValue: (row) => notes[row.id] ?? "",
+  renderCell: (row) => (
+    <EditableCell
+      value={notes[row.id] ?? ""}
+      onCommit={(next) => setNote(row.id, next)}
+      className="w-full whitespace-pre-wrap break-words px-3 py-2 text-left text-[13px]"
+      renderDisplay={(text) => (
+        <span className="whitespace-pre-wrap break-words text-muted-foreground">
+          {text || "Click to add notes..."}
+        </span>
+      )}
       renderEditor={({ value, commit, cancel }) => (
-        <StatusDropdown value={value} onSelect={commit} onClose={cancel} />
+        <textarea
+          autoFocus
+          defaultValue={value}
+          onBlur={(e) => commit(e.currentTarget.value)}
+          onKeyDown={(e) => e.key === "Escape" && cancel()}
+          rows={3}
+          className="w-full resize-none px-3 py-2 text-[13px] outline-none"
+        />
       )}
     />
   ),
 }`}
       >
-        <InlineEditDataGridDemo />
+        <NotionStyleDataGridDemo />
       </DemoBlock>
       <DemoBlock
         title="Cell types"

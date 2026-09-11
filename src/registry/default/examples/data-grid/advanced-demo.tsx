@@ -21,6 +21,7 @@ import {
   TextEditorInput,
   createCustomFunnel,
   type DataGridColumn,
+  type EditableCellEditorProps,
 } from "@/registry/default/data-grid";
 import { basicOrderColumns } from "./basic-demo";
 import {
@@ -72,6 +73,56 @@ const ORDER_STATUS_OPTIONS: DummyOrder["status"][] = [
   "done",
 ];
 
+function StatusDropdownEditor({
+  value,
+  commit,
+  cancel,
+}: EditableCellEditorProps<DummyOrder["status"]>) {
+  // Radix needs to finish closing the menu itself before we unmount it, so
+  // the picked value is stashed here and only committed from onOpenChange —
+  // committing straight from the item's click would force-unmount the menu
+  // mid-interaction and can leave Radix's scroll lock stuck (page unscrollable).
+  const pendingValueRef = useRef<DummyOrder["status"] | null>(null);
+
+  return (
+    <DropdownMenu
+      defaultOpen
+      onOpenChange={(open) => {
+        if (open) return;
+        const pending = pendingValueRef.current;
+        if (pending !== null) {
+          commit(pending);
+        } else {
+          cancel();
+        }
+      }}
+    >
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          className="h-7 w-full truncate rounded-sm px-1 text-left text-[13px] capitalize hover:bg-muted"
+        >
+          {value.replace("_", " ")}
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start">
+        {ORDER_STATUS_OPTIONS.map((option) => (
+          <DropdownMenuItem
+            key={option}
+            className="capitalize"
+            onSelect={() => {
+              pendingValueRef.current = option;
+            }}
+          >
+            {value === option ? <CheckIcon /> : null}
+            {option.replace("_", " ")}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 export function InlineEditDataGridDemo() {
   const [rows, setRows] = useState(DUMMY_ORDERS);
 
@@ -95,7 +146,13 @@ export function InlineEditDataGridDemo() {
         <EditableCell
           value={row.company}
           onCommit={(value) => updateRow(row.id, { company: value })}
-          renderEditor={(editor) => <TextEditorInput {...editor} />}
+          className="h-7 truncate rounded-sm px-1 text-[13px] hover:bg-muted"
+          renderEditor={(editor) => (
+            <TextEditorInput
+              {...editor}
+              className="h-7 rounded-sm bg-background px-1 text-[13px] ring-1 ring-ring"
+            />
+          )}
         />
       ),
     },
@@ -110,38 +167,11 @@ export function InlineEditDataGridDemo() {
         <EditableCell
           value={row.status}
           onCommit={(value) => updateRow(row.id, { status: value })}
+          className="h-7 truncate rounded-sm px-1 text-[13px] hover:bg-muted"
           renderDisplay={(status) => (
             <span className="capitalize">{status.replace("_", " ")}</span>
           )}
-          renderEditor={({ value, commit, cancel }) => (
-            <DropdownMenu
-              defaultOpen
-              onOpenChange={(open) => {
-                if (!open) cancel();
-              }}
-            >
-              <DropdownMenuTrigger asChild>
-                <button
-                  type="button"
-                  className="h-7 w-full truncate rounded-sm px-1 text-left text-[13px] capitalize hover:bg-muted"
-                >
-                  {value.replace("_", " ")}
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
-                {ORDER_STATUS_OPTIONS.map((option) => (
-                  <DropdownMenuItem
-                    key={option}
-                    className="capitalize"
-                    onClick={() => commit(option)}
-                  >
-                    {value === option ? <CheckIcon /> : null}
-                    {option.replace("_", " ")}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
+          renderEditor={(editor) => <StatusDropdownEditor {...editor} />}
         />
       ),
     },
@@ -155,6 +185,83 @@ export function InlineEditDataGridDemo() {
       getRowId={(row) => row.id}
       persist={false}
       virtualized={false}
+    />
+  );
+}
+
+function NotesTextarea({ value, commit, cancel }: EditableCellEditorProps<string>) {
+  const [draft, setDraft] = useState(value);
+
+  return (
+    <textarea
+      autoFocus
+      value={draft}
+      onChange={(event) => setDraft(event.currentTarget.value)}
+      onBlur={() => commit(draft)}
+      onKeyDown={(event) => {
+        if (event.key === "Escape") {
+          cancel();
+        }
+      }}
+      rows={3}
+      className="w-full resize-none px-3 py-2 text-[13px] outline-none"
+    />
+  );
+}
+
+export function NotionStyleDataGridDemo() {
+  const [notes, setNotes] = useState<Record<string, string>>({});
+
+  const columns: DataGridColumn<DummyOrder>[] = [
+    {
+      id: "orderNumber",
+      label: "Order",
+      width: 120,
+      getValue: (row) => row.orderNumber,
+    },
+    {
+      id: "company",
+      label: "Company",
+      width: 180,
+      getValue: (row) => row.company,
+    },
+    {
+      id: "notes",
+      label: "Notes",
+      width: 380,
+      interactive: true,
+      filterable: false,
+      cell: { wrap: true },
+      getValue: (row) => notes[row.id] ?? "",
+      renderCell: (row) => {
+        const value = notes[row.id] ?? "";
+        return (
+          <EditableCell
+            value={value}
+            onCommit={(next) =>
+              setNotes((current) => ({ ...current, [row.id]: next }))
+            }
+            className="w-full whitespace-pre-wrap break-words px-3 py-2 text-left text-[13px]"
+            renderDisplay={(text) => (
+              <span className="whitespace-pre-wrap break-words text-muted-foreground">
+                {text || "Click to add notes..."}
+              </span>
+            )}
+            renderEditor={(editor) => <NotesTextarea {...editor} />}
+          />
+        );
+      },
+    },
+  ];
+
+  return (
+    <DataGridView
+      tableId="docs-notion-orders"
+      columns={columns}
+      rows={DUMMY_ORDERS}
+      getRowId={(row) => row.id}
+      persist={false}
+      hideToolbar
     />
   );
 }

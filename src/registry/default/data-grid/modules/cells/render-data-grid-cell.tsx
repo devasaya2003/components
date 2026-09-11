@@ -24,13 +24,16 @@ export function renderDataGridCell<TData>(
     );
   }
 
+  const wrap = column.cell?.wrap ?? false;
+
   return (
     <span
       className={cn(
-        "truncate font-normal",
+        wrap ? "whitespace-pre-wrap break-words" : "truncate",
+        "font-normal",
         value === "—" && "text-muted-foreground",
       )}
-      title={value}
+      title={wrap ? undefined : value}
     >
       {value}
     </span>
